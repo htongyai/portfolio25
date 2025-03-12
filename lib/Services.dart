@@ -90,7 +90,7 @@ class ServicesPage extends StatelessWidget {
                       SizedBox(height: 30),
                       Image.asset(
                         'assets/topple.png',
-                        height: size.height * 0.6,
+                        height: size.height * 0.55,
                       )
                     ],
                   ),

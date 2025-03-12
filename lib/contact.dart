@@ -44,9 +44,9 @@ class _ContactPageState extends State<ContactPage> {
                             fontSize: 60, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
-                      const Text(
-                        "we@district2.studio",
-                        style: TextStyle(color: Colors.grey, fontSize: 26),
+                      Text(
+                        "hariras@augmaimaginarium.com".toUpperCase(),
+                        style: TextStyle(color: Colors.red[900], fontSize: 20),
                       ),
                       const SizedBox(height: 30),
                       const Text(
@@ -116,7 +116,8 @@ class _ContactPageState extends State<ContactPage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('mailto:example@example.com');
+                                launchURL(
+                                    'mailto:hariras@augmaimaginarium.com');
                               },
                               child: Icon(FontAwesomeIcons.envelope,
                                   color: _envelopeColor,

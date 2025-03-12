@@ -72,6 +72,7 @@ class _BouncingIconState extends State<BouncingIcon>
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -88,11 +89,13 @@ class _BouncingIconState extends State<BouncingIcon>
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return SlideTransition(
       position: _animation,
       child: Column(
@@ -101,7 +104,7 @@ class _BouncingIconState extends State<BouncingIcon>
           currentIndex + 1 == items.length
               ? Icon(
                   Icons.keyboard_arrow_up,
-                  size: 30,
+                  size: size.height * 0.02,
                   color: currentIndex + 1 == items.length
                       ? Colors.white
                       : Colors.grey,
@@ -110,7 +113,7 @@ class _BouncingIconState extends State<BouncingIcon>
           Text(
             currentIndex + 1 == items.length ? "Back to Top" : "Explore More",
             style: GoogleFonts.orbitron(
-              fontSize: 13,
+              fontSize: size.height * 0.0125,
               color:
                   currentIndex + 1 == items.length ? Colors.white : Colors.grey,
             ),
@@ -118,7 +121,7 @@ class _BouncingIconState extends State<BouncingIcon>
           currentIndex + 1 != items.length
               ? Icon(
                   Icons.keyboard_arrow_down,
-                  size: 30,
+                  size: size.height * 0.02,
                   color: currentIndex + 1 == items.length
                       ? Colors.white
                       : Colors.grey,
@@ -139,14 +142,43 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   final Map<String, Widget> pages = {
     "Home": HomePage(),
   };
-  ScrollController N = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    int newIndex = (_scrollController.offset / screenHeight).round();
+
+    if (newIndex != currentIndex) {
+      setState(() {
+        currentIndex = newIndex;
+      });
+    }
+  }
+
+  void _goTo(index) {
+    _scrollController.animateTo(
+      index,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    currentIndex = index;
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
     return Stack(
       children: [
         ListView.builder(
-          controller: N,
+          controller: _scrollController,
           shrinkWrap: true,
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -203,24 +235,29 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Resume",
+                      Text("Press kit",
                           style: TextStyle(
                             fontSize: size.width * 0.01,
                             color: Colors.white,
                           )),
+                      // Text("Resume",
+                      //     style: TextStyle(
+                      //       fontSize: size.width * 0.01,
+                      //       color: Colors.white,
+                      //     )),
                       SizedBox(width: size.width * 0.02),
                       GestureDetector(
-                        onTap: () {
-                          showDialog(
+                        onTap: () async {
+                          int s = await showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                                 backgroundColor: Colors.white,
-                                title: Text("Menu",
+                                title: Text("Learn more about:",
                                     style:
                                         TextStyle(fontSize: size.width * 0.02)),
                                 content: Column(
@@ -229,47 +266,56 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                     ListTile(
                                       title: Text("Home",
                                           style: TextStyle(
-                                              fontSize: size.width * 0.015)),
+                                              fontSize: size.width * 0.01)),
                                       onTap: () {
-                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop(0);
                                         // Navigate to Home
                                       },
                                     ),
                                     ListTile(
-                                      title: Text(
-                                          "Education and Certifications",
+                                      title: Text("Skills and Services",
                                           style: TextStyle(
-                                              fontSize: size.width * 0.015)),
+                                              fontSize: size.width * 0.01)),
                                       onTap: () {
-                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop(1);
+                                        // Navigate to Work Experiences
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: Text("Education and Experiences",
+                                          style: TextStyle(
+                                              fontSize: size.width * 0.01)),
+                                      onTap: () {
+                                        Navigator.of(context).pop(2);
                                         // Navigate to Education and Certifications
                                       },
                                     ),
                                     ListTile(
-                                      title: Text("Work Experiences",
+                                      title: Text("Featured Projects",
                                           style: TextStyle(
-                                              fontSize: size.width * 0.015)),
+                                              fontSize: size.width * 0.01)),
                                       onTap: () {
-                                        Navigator.of(context).pop();
-                                        // Navigate to Work Experiences
+                                        Navigator.of(context).pop(3);
+                                        // Navigate to Notable Projects
                                       },
                                     ),
                                     ListTile(
                                       title: Text("Award and Press",
                                           style: TextStyle(
-                                              fontSize: size.width * 0.015)),
+                                              fontSize: size.width * 0.01)),
                                       onTap: () {
-                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop(4);
                                         // Navigate to Award and Press
                                       },
                                     ),
                                     ListTile(
-                                      title: Text("Notable Projects",
+                                      title: Text("Contact Me",
                                           style: TextStyle(
-                                              fontSize: size.width * 0.015)),
+                                              fontSize: size.width * 0.01)),
                                       onTap: () {
-                                        Navigator.of(context).pop();
-                                        // Navigate to Notable Projects
+                                        Navigator.of(context)
+                                            .pop(items.length - 1);
+                                        // Navigate to Award and Press
                                       },
                                     ),
                                   ],
@@ -277,6 +323,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                               );
                             },
                           );
+                          _goTo(s);
                         },
                         child: Icon(
                           Icons.menu,
@@ -289,45 +336,77 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                 ],
               ),
             ),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  print(currentIndex);
-                  if (currentIndex < items.length - 1) {
-                    print(currentIndex);
-                    N.animateTo(
-                      (currentIndex + 1) * size.height,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    );
-                    currentIndex++;
-                  } else if (currentIndex + 1 == items.length) {
-                    print(currentIndex);
-                    N.animateTo(
-                      0,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    );
-                    currentIndex = 0;
-                  }
-                });
-              },
-              child: Container(
-                width: size.width,
-                decoration: BoxDecoration(
-                  color: currentIndex + 1 == items.length
-                      ? Colors.black
-                      : Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: BouncingIcon(),
+            Container(
+              width: size.width,
+              decoration: BoxDecoration(
+                color: currentIndex + 1 == items.length
+                    ? Colors.black
+                    : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              padding:
+                  const EdgeInsets.only(bottom: 8, top: 4, left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(""),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          print(currentIndex);
+                          if (currentIndex < items.length - 1) {
+                            print(currentIndex);
+                            _scrollController.animateTo(
+                              (currentIndex + 1) * size.height,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                            currentIndex++;
+                          } else if (currentIndex + 1 == items.length) {
+                            print(currentIndex);
+                            _scrollController.animateTo(
+                              0,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                            currentIndex = 0;
+                          }
+                        });
+                      },
+                      child: BouncingIcon()),
+                  currentIndex == 0
+                      ? SizedBox()
+                      : InkWell(
+                          onTap: () {
+                            setState(() {
+                              print(currentIndex);
+
+                              print(currentIndex);
+                              _scrollController.animateTo(
+                                0,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                              currentIndex = 0;
+                            });
+                          },
+                          child: Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.black),
+                              child: Icon(
+                                Icons.arrow_drop_up_sharp,
+                                color: Colors.white,
+                              )),
+                        )
+                ],
               ),
             ),
           ],
