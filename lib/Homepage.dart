@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:port_site/main.dart';
 import 'package:port_site/util.dart';
 
 class HomePage extends StatefulWidget {
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: size.height * 0.02),
                       Text(
-                        "I help bridge the gap between reality and the digital frontier by creating immersive experiences that redefine how we connect and play. By transforming spaces into interactive playgrounds, I blend technology with imagination—ensuring innovation leads to deeper engagement and unforgettable adventures. \n\nLet me help you stand out by offering cutting-edge experiences that captivate, inspire, and set you apart in a rapidly evolving digital world.",
+                        "Let me help you stand out by transforming spaces into immersive playgrounds that redefine how we connect and play. I blend technology with imagination to ensuring deeper engagement and unforgettable adventures setting you apart in this competitive landscape.",
                         style: TextStyle(
                             fontSize: size.width * 0.01, color: Colors.black54),
                       ),
@@ -94,7 +95,10 @@ class _HomePageState extends State<HomePage> {
                           // ),
                           // SizedBox(width: size.width * 0.01),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              goTo(items.length - 1, scrollController);
+                              setState(() {});
+                            },
                             style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.all(Colors.black),
@@ -108,11 +112,11 @@ class _HomePageState extends State<HomePage> {
                                   MaterialStateProperty.all(Colors.black),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Text(
                                 "Let's Talk!",
                                 style: GoogleFonts.nunito(
-                                    fontSize: size.width * 0.01,
+                                    fontSize: size.width * 0.0125,
                                     color: Colors.white),
                               ),
                             ),

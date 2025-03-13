@@ -92,7 +92,7 @@ class AwardsPage extends StatelessWidget {
                   crossAxisCount: size.width > 800 ? 4 : 1,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20,
-                  childAspectRatio: 1.05,
+                  childAspectRatio: 1.0,
                 ),
                 itemCount: awards.length,
                 itemBuilder: (context, index) {
@@ -139,7 +139,6 @@ class AwardsPage extends StatelessWidget {
                                     //  4
                                     SizedBox(height: 5),
                                     Text(
-                                      maxLines: 1,
                                       award["title"]!,
                                       style: TextStyle(
                                         fontSize: size.height * 0.02,

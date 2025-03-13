@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:port_site/util.dart';
 
 class ContactPage extends StatefulWidget {
@@ -11,12 +12,15 @@ class ContactPage extends StatefulWidget {
 
 class _ContactPageState extends State<ContactPage> {
   Color _instagramColor = Colors.black54;
-
   Color _linkedinColor = Colors.black54;
-
   Color _lineColor = Colors.black54;
-
   Color _envelopeColor = Colors.black54;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _subjectController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +32,6 @@ class _ContactPageState extends State<ContactPage> {
         body: Center(
           child: Container(
             width: size.width * 0.7,
-            //padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -127,13 +130,6 @@ class _ContactPageState extends State<ContactPage> {
                         ],
                       ),
                       const SizedBox(height: 30),
-                      // const Text(
-                      //   "Saigon, Vietnam",
-                      //   style: TextStyle(
-                      //       fontWeight: FontWeight.bold, fontSize: 16),
-                      // ),
-                      // const Text("+84 (0) 28 3636 1354",
-                      //     style: TextStyle(fontSize: 16)),
                     ],
                   ),
                 ),
@@ -144,47 +140,57 @@ class _ContactPageState extends State<ContactPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Say hello",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
                       const SizedBox(height: 20),
 
                       // Name Field
-                      _buildInputField("NAME", "Your name"),
+                      _buildInputField("NAME", "Your name", _nameController),
 
                       // Company Field
-                      _buildInputField("COMPANY", "Your company"),
+                      _buildInputField(
+                          "COMPANY", "Your company", _companyController),
 
                       // Subject Field
-                      _buildInputField("SUBJECT", "Choose subject"),
+                      _buildInputField(
+                          "SUBJECT", "Choose subject", _subjectController),
 
                       // Email Field
-                      _buildInputField("EMAIL", "Email address"),
+                      _buildInputField(
+                          "EMAIL", "Email address", _emailController),
 
                       // Message Field
-                      _buildInputField("MESSAGE", "Start typing here",
+                      _buildInputField(
+                          "MESSAGE", "Start typing here", _messageController,
                           maxLines: 3),
 
                       const SizedBox(height: 20),
 
                       // Submit Button
-                      GestureDetector(
-                        onTap: () {
-                          // Add submit action here
-                          print("Form Submitted");
+                      InkWell(
+                        onTap: () async {
+                          await _submitForm();
+                          _showSubmissionCompleteDialog(context);
                         },
-                        child: Row(
-                          children: [
-                            const Text(
-                              "Submit",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 5),
-                            const Icon(Icons.arrow_forward, size: 18),
-                          ],
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              const Text(
+                                "Submit",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              const SizedBox(width: 5),
+                              const Icon(Icons.arrow_forward,
+                                  size: 18, color: Colors.white),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -199,7 +205,9 @@ class _ContactPageState extends State<ContactPage> {
   }
 
   // Function to create input fields
-  Widget _buildInputField(String label, String hintText, {int maxLines = 1}) {
+  Widget _buildInputField(
+      String label, String hintText, TextEditingController controller,
+      {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -210,6 +218,7 @@ class _ContactPageState extends State<ContactPage> {
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 5),
           TextField(
+            controller: controller,
             maxLines: maxLines,
             decoration: InputDecoration(
               hintText: hintText,
@@ -221,11 +230,39 @@ class _ContactPageState extends State<ContactPage> {
       ),
     );
   }
-}
 
-// Style for social media links
-const TextStyle linkStyle = TextStyle(
-  color: Colors.black,
-  fontWeight: FontWeight.bold,
-  fontSize: 14,
-);
+  Future<void> _submitForm() async {
+    await FirebaseFirestore.instance
+        .collection('contacts')
+        .doc(DateTime.now.toString())
+        .set({
+      'name': _nameController.text,
+      'company': _companyController.text,
+      'subject': _subjectController.text,
+      'email': _emailController.text,
+      'message': _messageController.text,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+  void _showSubmissionCompleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Submission Complete"),
+          content:
+              Text("Thank you for reaching out! We will get back to you soon."),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

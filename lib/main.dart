@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,10 +10,12 @@ import 'package:port_site/Homepage.dart';
 import 'package:port_site/Services.dart';
 import 'package:port_site/contact.dart';
 import 'package:port_site/featuredProjects.dart';
+import 'package:port_site/firebase_options.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 int currentIndex = 0;
+final ScrollController scrollController = ScrollController();
 final List<dynamic> items = [
   HomePage(),
   ServicesPage(),
@@ -21,7 +24,11 @@ final List<dynamic> items = [
   AwardsPage(),
   ContactPage()
 ];
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // Ensure this is used
+  );
   runApp(MyApp());
 }
 
@@ -142,18 +149,17 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   final Map<String, Widget> pages = {
     "Home": HomePage(),
   };
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _scrollController.addListener(_onScroll);
+    scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     double screenHeight = MediaQuery.of(context).size.height;
-    int newIndex = (_scrollController.offset / screenHeight).round();
+    int newIndex = (scrollController.offset / screenHeight).round();
 
     if (newIndex != currentIndex) {
       setState(() {
@@ -163,7 +169,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   }
 
   void _goTo(index) {
-    _scrollController.animateTo(
+    scrollController.animateTo(
       index,
       duration: Duration(milliseconds: 500),
       curve: Curves.easeInOut,
@@ -178,7 +184,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     return Stack(
       children: [
         ListView.builder(
-          controller: _scrollController,
+          controller: scrollController,
           shrinkWrap: true,
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -336,81 +342,144 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                 ],
               ),
             ),
-            Container(
-              width: size.width,
-              decoration: BoxDecoration(
-                color: currentIndex + 1 == items.length
-                    ? Colors.black
-                    : Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              padding:
-                  const EdgeInsets.only(bottom: 8, top: 4, left: 8, right: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(""),
-                  InkWell(
-                      onTap: () {
-                        setState(() {
-                          print(currentIndex);
-                          if (currentIndex < items.length - 1) {
+            currentIndex == 0
+                ? Container(
+                    width: size.width,
+                    decoration: BoxDecoration(
+                      color: currentIndex + 1 == items.length
+                          ? Colors.black
+                          : Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.only(
+                        bottom: 8, top: 4, left: 8, right: 8),
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
                             print(currentIndex);
-                            _scrollController.animateTo(
-                              (currentIndex + 1) * size.height,
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
-                            );
-                            currentIndex++;
-                          } else if (currentIndex + 1 == items.length) {
-                            print(currentIndex);
-                            _scrollController.animateTo(
-                              0,
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
-                            );
-                            currentIndex = 0;
-                          }
-                        });
-                      },
-                      child: BouncingIcon()),
-                  currentIndex == 0
-                      ? SizedBox()
-                      : InkWell(
-                          onTap: () {
-                            setState(() {
+                            if (currentIndex < items.length - 1) {
                               print(currentIndex);
-
+                              scrollController.animateTo(
+                                (currentIndex + 1) * size.height,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                              currentIndex++;
+                            } else if (currentIndex + 1 == items.length) {
                               print(currentIndex);
-                              _scrollController.animateTo(
+                              scrollController.animateTo(
                                 0,
                                 duration: Duration(milliseconds: 500),
                                 curve: Curves.easeInOut,
                               );
                               currentIndex = 0;
-                            });
-                          },
-                          child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.black),
-                              child: Icon(
-                                Icons.arrow_drop_up_sharp,
-                                color: Colors.white,
-                              )),
-                        )
-                ],
-              ),
-            ),
+                            }
+                          });
+                        },
+                        child: BouncingIcon()),
+                  )
+                : SizedBox(),
           ],
         ),
+        currentIndex == 0
+            ? SizedBox()
+            : Positioned(
+                bottom: 0,
+                child: Container(
+                  width: size.width * 0.98,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (currentIndex < items.length - 1) {
+                                  print(currentIndex);
+                                  scrollController.animateTo(
+                                    (currentIndex - 1) * size.height,
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut,
+                                  );
+                                  currentIndex--;
+                                }
+                              });
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.red[900]),
+                                child: Icon(
+                                  Icons.arrow_drop_up_sharp,
+                                  color: Colors.white,
+                                )),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.005,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (currentIndex < items.length - 1) {
+                                  print(currentIndex);
+                                  scrollController.animateTo(
+                                    (currentIndex + 1) * size.height,
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut,
+                                  );
+                                  currentIndex++;
+                                }
+                              });
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.red[900]),
+                                child: Icon(
+                                  Icons.arrow_drop_down_sharp,
+                                  color: Colors.white,
+                                )),
+                          ),
+                        ],
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            print(currentIndex);
+
+                            print(currentIndex);
+                            scrollController.animateTo(
+                              0,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                            currentIndex = 0;
+                          });
+                        },
+                        child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.black),
+                            child: Icon(
+                              Icons.arrow_drop_up_sharp,
+                              color: Colors.white,
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+              )
       ],
     );
   }
@@ -477,7 +546,7 @@ class MobileLayout extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                "I help bridge the gap between reality and the digital frontier by creating immersive experiences that redefine how we connect and play. By transforming spaces into interactive playgrounds, I blend technology with imagination—ensuring innovation leads to deeper engagement and unforgettable adventures. Let me help you stand out by offering cutting-edge experiences that captivate, inspire, and set you apart in a rapidly evolving digital world.",
+                "I help bridge the gap between reality and the digital frontier by creating immersive experiences that redefine how we connect and play. \n\nLet me help you stand out By transforming spaces into interactive playgrounds, I blend technology with imagination—ensuring deeper engagement and unforgettable adventures setting you apart in this competitive landscape.",
                 style: TextStyle(
                     fontSize: size.width * 0.04, color: Colors.black54),
               ),
