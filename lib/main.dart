@@ -11,6 +11,8 @@ import 'package:port_site/Services.dart';
 import 'package:port_site/contact.dart';
 import 'package:port_site/featuredProjects.dart';
 import 'package:port_site/firebase_options.dart';
+import 'package:port_site/util.dart';
+import 'package:port_site/worklist.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -22,7 +24,7 @@ final List<dynamic> items = [
   ProjectShowcasePage(),
   EducationAndCertificationPage(),
   AwardsPage(),
-  ContactPage()
+  ContactPage(),
 ];
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        highlightColor: Colors.cyan,
+        //highlightColor: Colors.cyan,
         primaryColor: Colors.grey[200],
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
@@ -50,6 +52,15 @@ class MyApp extends StatelessWidget {
 }
 
 class ResponsiveHomePage extends StatelessWidget {
+  void goTo(index, _scrollController) {
+    _scrollController.animateTo(
+      index,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    currentIndex = index;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -254,7 +265,8 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                       SizedBox(width: size.width * 0.02),
                       GestureDetector(
                         onTap: () async {
-                          int s = await showDialog(
+                          int s = 0;
+                          showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
@@ -274,6 +286,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                           style: TextStyle(
                                               fontSize: size.width * 0.01)),
                                       onTap: () {
+                                        s = 0;
                                         Navigator.of(context).pop(0);
                                         // Navigate to Home
                                       },
@@ -283,7 +296,9 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                           style: TextStyle(
                                               fontSize: size.width * 0.01)),
                                       onTap: () {
+                                        s = 1;
                                         Navigator.of(context).pop(1);
+
                                         // Navigate to Work Experiences
                                       },
                                     ),
@@ -292,6 +307,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                           style: TextStyle(
                                               fontSize: size.width * 0.01)),
                                       onTap: () {
+                                        s = 2;
                                         Navigator.of(context).pop(2);
                                         // Navigate to Education and Certifications
                                       },
@@ -301,6 +317,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                           style: TextStyle(
                                               fontSize: size.width * 0.01)),
                                       onTap: () {
+                                        s = 3;
                                         Navigator.of(context).pop(3);
                                         // Navigate to Notable Projects
                                       },
@@ -310,6 +327,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                           style: TextStyle(
                                               fontSize: size.width * 0.01)),
                                       onTap: () {
+                                        s = 4;
                                         Navigator.of(context).pop(4);
                                         // Navigate to Award and Press
                                       },
@@ -319,6 +337,8 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                           style: TextStyle(
                                               fontSize: size.width * 0.01)),
                                       onTap: () {
+                                        s = items.length - 1;
+
                                         Navigator.of(context)
                                             .pop(items.length - 1);
                                         // Navigate to Award and Press
@@ -328,8 +348,11 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                                 ),
                               );
                             },
-                          );
-                          _goTo(s);
+                          ).then((onValue) {
+                            onValue;
+                            print("test" + s.toString());
+                            goToEm(s, scrollController, context);
+                          });
                         },
                         child: Icon(
                           Icons.menu,

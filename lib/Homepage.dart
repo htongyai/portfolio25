@@ -96,7 +96,8 @@ class _HomePageState extends State<HomePage> {
                           // SizedBox(width: size.width * 0.01),
                           TextButton(
                             onPressed: () {
-                              goTo(items.length - 1, scrollController);
+                              goToEm(
+                                  items.length - 1, scrollController, context);
                               setState(() {});
                             },
                             style: ButtonStyle(
@@ -135,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('https://www.instagram.com');
+                                launchURL(SocialLinks().instgram);
                               },
                               child: Icon(FontAwesomeIcons.instagram,
                                   color: _instagramColor,
@@ -152,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('https://www.linkedin.com');
+                                launchURL(SocialLinks().linkedIn);
                               },
                               child: Icon(FontAwesomeIcons.linkedin,
                                   color: _linkedinColor,
@@ -169,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('https://line.me');
+                                launchURL(SocialLinks().line);
                               },
                               child: Icon(FontAwesomeIcons.line,
                                   color: _lineColor, size: size.width * 0.0175),
@@ -185,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('mailto:example@example.com');
+                                launchURL(SocialLinks().emailLink);
                               },
                               child: Icon(FontAwesomeIcons.envelope,
                                   color: _envelopeColor,

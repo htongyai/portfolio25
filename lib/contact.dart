@@ -69,7 +69,7 @@ class _ContactPageState extends State<ContactPage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('https://www.instagram.com');
+                                launchURL(SocialLinks().instgram);
                               },
                               child: Icon(FontAwesomeIcons.instagram,
                                   color: _instagramColor,
@@ -86,7 +86,7 @@ class _ContactPageState extends State<ContactPage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('https://www.linkedin.com');
+                                launchURL(SocialLinks().linkedIn);
                               },
                               child: Icon(FontAwesomeIcons.linkedin,
                                   color: _linkedinColor,
@@ -103,7 +103,7 @@ class _ContactPageState extends State<ContactPage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL('https://line.me');
+                                launchURL(SocialLinks().line);
                               },
                               child: Icon(FontAwesomeIcons.line,
                                   color: _lineColor, size: size.width * 0.0175),
@@ -119,8 +119,7 @@ class _ContactPageState extends State<ContactPage> {
                             }),
                             child: GestureDetector(
                               onTap: () {
-                                launchURL(
-                                    'mailto:hariras@augmaimaginarium.com');
+                                launchURL(SocialLinks().emailLink);
                               },
                               child: Icon(FontAwesomeIcons.envelope,
                                   color: _envelopeColor,

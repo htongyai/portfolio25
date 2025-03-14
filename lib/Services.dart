@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:port_site/worklist.dart';
 
 class ServicesPage extends StatelessWidget {
   final List<Map<String, String>> services = [
@@ -209,12 +210,22 @@ class _HoverCardState extends State<HoverCard> {
                 Positioned(
                   bottom: 5,
                   right: 5,
-                  child: AnimatedOpacity(
-                    opacity: _isHovered ? 1.0 : 1.0,
-                    duration: Duration(milliseconds: 300),
-                    child: Icon(Icons.arrow_forward,
-                        color: _isHovered ? Colors.red : Colors.black,
-                        size: 24),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PortfolioGrid(),
+                        ),
+                      );
+                    },
+                    child: AnimatedOpacity(
+                      opacity: _isHovered ? 1.0 : 1.0,
+                      duration: Duration(milliseconds: 300),
+                      child: Icon(Icons.arrow_forward,
+                          color: _isHovered ? Colors.red : Colors.black,
+                          size: 24),
+                    ),
                   ),
                 ),
               ],

@@ -169,10 +169,10 @@ class ProjectShowcasePage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ),
+                            // Icon(
+                            //   Icons.arrow_forward,
+                            //   color: Colors.white,
+                            // ),
                           ],
                         ),
                       ),
